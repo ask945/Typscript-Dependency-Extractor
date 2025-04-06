@@ -4,6 +4,7 @@ import * as os from 'os';
 import runWorker from './runWorker';
 import parseFiles from './parseFiles';
 import { FileAnalysis } from './utils/tokens';
+import resolveDependencies from './resolveDependencies';
 
 function getAllFiles(dir: string, fileList: string[] = []): string[] {
     if (!fs.existsSync(dir)) {
@@ -72,8 +73,8 @@ export default async function generateAST(dir: string) {
         }
     }
 
-    
-    const finalResult = normalizePathsFromSrc(astResults);
+    const fullResults = resolveDependencies(astResults);
+    const finalResult = normalizePathsFromSrc(fullResults);
     const outputPath = path.join(__dirname, "ast-output.json");
     fs.writeFileSync(outputPath, safeStringify(finalResult));
     console.timeEnd("AST parsing");
